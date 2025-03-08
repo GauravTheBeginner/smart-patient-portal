@@ -1,0 +1,73 @@
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Patient {
+  id        String   @id @default(uuid())
+  name      String
+  birthDate DateTime
+  gender    String
+  address   String?
+  phone     String?
+  email     String   @unique
+  createdAt DateTime @default(now())
+  records   HealthRecord[]
+}
+
+model HealthRecord {
+  id         String    @id @default(uuid())
+  title      String
+  type       String
+  date       DateTime
+  provider   String
+  shared     Boolean   @default(false)
+  content    String?
+  patientId  String
+  patient    Patient   @relation(fields: [patientId], references: [id])
+  attachments Attachment[]
+  sharedWith SharedAccess[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Attachment {
+  id             String       @id @default(uuid())
+  name           String
+  type           String
+  url            String
+  size           Int?
+  healthRecordId String
+  healthRecord   HealthRecord @relation(fields: [healthRecordId], references: [id])
+}
+
+model SharedAccess {
+  id              String       @id @default(uuid())
+  email           String
+  healthRecordId  String
+  healthRecord    HealthRecord @relation(fields: [healthRecordId], references: [id])
+  viewPermission  Boolean      @default(true)
+  downloadPermission Boolean   @default(false)
+  resharePermission Boolean    @default(false)
+  expiration      DateTime?
+  createdAt       DateTime     @default(now())
+
+  @@unique([email, healthRecordId])
+}
