@@ -30,6 +30,11 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Welcome to the Health Records API' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port http://localhost:${PORT}`);
-});
+// Start the server
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port http://localhost:${PORT}`);
+  });
+}
+
+export default app;

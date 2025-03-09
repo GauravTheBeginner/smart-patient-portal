@@ -1,5 +1,8 @@
 
-// This is a TypeScript entry point for the backend
-// You can run this with: npx ts-node backend/start.ts
+import app from './server';
 
-import './server';
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port http://localhost:${PORT}`);
+});
